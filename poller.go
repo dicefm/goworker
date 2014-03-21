@@ -88,7 +88,12 @@ func (p *poller) poll(pool *pools.ResourcePool, interval time.Duration, quit <-c
 
 					job, err := p.getJob(conn)
 					if err != nil {
-						logger.Errorf("Error on %v getting job from %v: %v", p, p.Queues, err)
+						if err.Error() == "use of closed network connection" {
+							logger.Criticalf("Error on %v getting job from %v: %v", p, p.Queues, err)
+							exitOnComplete = true // force quit at the end.
+						} else {
+							logger.Errorf("Error on %v getting job from %v: %v", p, p.Queues, err)
+						}
 					}
 					if job != nil {
 						conn.Send("INCR", fmt.Sprintf("%sstat:processed:%v", namespace, p))
