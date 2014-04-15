@@ -135,3 +135,8 @@ func flags() error {
 	isStrict = strings.IndexRune(queuesString, '=') == -1
 	return nil
 }
+
+func flagsWithQueues(queues []string) error {
+	queuesString = strings.Join(queues, ",")
+	return flags()
+}

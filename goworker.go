@@ -1,12 +1,13 @@
 package goworker
 
 import (
-	"code.google.com/p/vitess/go/pools"
-	"github.com/cihub/seelog"
 	"os"
 	"strconv"
 	"sync"
 	"time"
+
+	"code.google.com/p/vitess/go/pools"
+	"github.com/cihub/seelog"
 )
 
 var logger seelog.LoggerInterface
@@ -26,6 +27,16 @@ func Work() error {
 	return startWithPool(p)
 }
 
+func WorkWithQueues(queues []string) error {
+	err := initEnvWithQueues(queues)
+	if err != nil {
+		return err
+	}
+	p := newRedisPool(uri, connections, connections, time.Minute)
+	defer p.Close()
+	return startWithPool(p)
+}
+
 // Call this function to run goworker with the given pool.
 func WorkWithPool(pool *pools.ResourcePool) error {
 	err := initEnv()
@@ -36,14 +47,26 @@ func WorkWithPool(pool *pools.ResourcePool) error {
 }
 
 // Init logger and flags.
-func initEnv() error {
+func initLogger() error {
 	var err error
 	logger, err = seelog.LoggerFromWriterWithMinLevel(os.Stdout, seelog.InfoLvl)
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
+func initEnv() error {
+	initLogger()
 	if err := flags(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func initEnvWithQueues(queues []string) error {
+	initLogger()
+	if err := flagsWithQueues(queues); err != nil {
 		return err
 	}
 	return nil
