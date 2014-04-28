@@ -43,7 +43,6 @@ func (p *process) open(conn *redisConn) error {
 }
 
 func (p *process) close(conn *redisConn) error {
-	logger.Infof("%v shutdown", p)
 	conn.Send("SREM", fmt.Sprintf("%sworkers", namespace), p)
 	conn.Send("DEL", fmt.Sprintf("%sstat:processed:%s", namespace, p))
 	conn.Send("DEL", fmt.Sprintf("%sstat:failed:%s", namespace, p))
