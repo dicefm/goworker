@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"code.google.com/p/vitess/go/pools"
 	"github.com/cihub/seelog"
+	"github.com/youtube/vitess/go/pools"
 )
 
 var logger seelog.LoggerInterface

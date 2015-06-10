@@ -1,10 +1,11 @@
 package goworker
 
 import (
-	"code.google.com/p/vitess/go/pools"
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/youtube/vitess/go/pools"
 )
 
 type poller struct {
