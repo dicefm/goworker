@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/youtube/vitess/go/pools"
+	"golang.org/x/net/context"
 )
 
 type worker struct {
@@ -81,7 +82,8 @@ func (w *worker) finish(conn *redisConn, job *job, err error) error {
 }
 
 func (w *worker) work(pool *pools.ResourcePool, jobs <-chan *job, monitor *sync.WaitGroup) {
-	resource, err := pool.Get()
+	ctx := context.Background()
+	resource, err := pool.Get(ctx)
 	if err != nil {
 		logger.Criticalf("Error on getting connection in worker %v", w)
 	} else {
@@ -94,7 +96,8 @@ func (w *worker) work(pool *pools.ResourcePool, jobs <-chan *job, monitor *sync.
 
 	go func() {
 		defer func() {
-			resource, err := pool.Get()
+			ctx := context.Background()
+			resource, err := pool.Get(ctx)
 			if err != nil {
 				logger.Criticalf("Error on getting connection in worker %v", w)
 			} else {
@@ -114,7 +117,8 @@ func (w *worker) work(pool *pools.ResourcePool, jobs <-chan *job, monitor *sync.
 				errorLog := fmt.Sprintf("No worker for %s in queue %s with args %v", job.Payload.Class, job.Queue, job.Payload.Args)
 				logger.Critical(errorLog)
 
-				resource, err := pool.Get()
+				ctx := context.Background()
+				resource, err := pool.Get(ctx)
 				if err != nil {
 					logger.Criticalf("Error on getting connection in worker %v", w)
 				} else {
@@ -130,7 +134,8 @@ func (w *worker) work(pool *pools.ResourcePool, jobs <-chan *job, monitor *sync.
 func (w *worker) run(pool *pools.ResourcePool, job *job, workerFunc workerFunc) {
 	var err error
 	defer func() {
-		resource, poolErr := pool.Get()
+		ctx := context.Background()
+		resource, poolErr := pool.Get(ctx)
 		if poolErr != nil {
 			logger.Criticalf("Error on getting connection in worker %v", w)
 		} else {
@@ -145,7 +150,8 @@ func (w *worker) run(pool *pools.ResourcePool, job *job, workerFunc workerFunc) 
 		}
 	}()
 
-	resource, err := pool.Get()
+	ctx := context.Background()
+	resource, err := pool.Get(ctx)
 	if err != nil {
 		logger.Criticalf("Error on getting connection in worker %v", w)
 	} else {

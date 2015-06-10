@@ -3,9 +3,11 @@ package goworker
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"testing"
 	"time"
+
+	"github.com/garyburd/redigo/redis"
+	"golang.org/x/net/context"
 )
 
 func TestEnqueueHasNoDeadlock(t *testing.T) {
@@ -31,7 +33,8 @@ func TestEnqueueHasNoDeadlock(t *testing.T) {
 	if p.IsClosed() {
 		t.Error("Pool should not be closed")
 	}
-	resource, _ := p.Get()
+	ctx := context.Background()
+	resource, _ := p.Get(ctx)
 	conn := resource.(*redisConn)
 	defer p.Put(conn)
 	defer conn.Do("DEL", fmt.Sprintf("%squeue:dummy", namespace))
@@ -45,7 +48,8 @@ func TestEnqueueWriteToRedis(t *testing.T) {
 	queues.Set("no")
 	Enqueue("test2", "TestEnqueueWriteToRedis", nil)
 	WorkWithPool(p)
-	resource, _ := pool.Get()
+	ctx := context.Background()
+	resource, _ := pool.Get(ctx)
 	conn := resource.(*redisConn)
 	defer pool.Put(conn)
 	defer conn.Do("DEL", fmt.Sprintf("%squeue:test2", namespace))

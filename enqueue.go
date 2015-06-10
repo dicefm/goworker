@@ -3,6 +3,8 @@ package goworker
 import (
 	"encoding/json"
 	"fmt"
+
+	"golang.org/x/net/context"
 )
 
 // Enqueue function let you asynchronously enqueue a new job in Resque given
@@ -27,7 +29,8 @@ func Enqueue(queue string, class string, args []interface{}) (err error) {
 
 	// Retrieve a connection from the pool or create a new one if no pool is opened.
 	if pool != nil && !pool.IsClosed() {
-		resource, err := pool.Get()
+		ctx := context.Background()
+		resource, err := pool.Get(ctx)
 		if err != nil {
 			return err
 		}

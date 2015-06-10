@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/youtube/vitess/go/pools"
+	"golang.org/x/net/context"
 )
 
 type poller struct {
@@ -50,7 +51,8 @@ func (p *poller) getJob(conn *redisConn) (*job, error) {
 func (p *poller) poll(pool *pools.ResourcePool, interval time.Duration, quit <-chan bool) <-chan *job {
 	jobs := make(chan *job)
 
-	resource, err := pool.Get()
+	ctx := context.Background()
+	resource, err := pool.Get(ctx)
 	if err != nil {
 		logger.Criticalf("Error on getting connection in poller %s", p)
 	} else {
@@ -64,7 +66,8 @@ func (p *poller) poll(pool *pools.ResourcePool, interval time.Duration, quit <-c
 		defer func() {
 			close(jobs)
 
-			resource, err := pool.Get()
+			ctx := context.Background()
+			resource, err := pool.Get(ctx)
 			if err != nil {
 				logger.Criticalf("Error on getting connection in poller %s", p)
 			} else {
@@ -80,7 +83,8 @@ func (p *poller) poll(pool *pools.ResourcePool, interval time.Duration, quit <-c
 			case <-quit:
 				return
 			default:
-				resource, err := pool.Get()
+				ctx := context.Background()
+				resource, err := pool.Get(ctx)
 				if err != nil {
 					logger.Criticalf("Error on getting connection in poller %s", p)
 					return
@@ -108,7 +112,8 @@ func (p *poller) poll(pool *pools.ResourcePool, interval time.Duration, quit <-c
 								logger.Criticalf("Error requeueing %v: %v", job, err)
 								return
 							}
-							resource, err := pool.Get()
+							ctx := context.Background()
+							resource, err := pool.Get(ctx)
 							if err != nil {
 								logger.Criticalf("Error on getting connection in poller %s", p)
 							}
