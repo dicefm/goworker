@@ -28,11 +28,28 @@ func Work() error {
 }
 
 func WorkWithQueues(queues []string) error {
-	err := initEnvWithQueues(queues)
+	options := WorkerOptions{
+		Queues:         queues,
+		MinConnections: connections,
+		MaxConnections: connections,
+		Timeout:        time.Minute,
+	}
+	return WorkWithOptions(options)
+}
+
+type WorkerOptions struct {
+	Queues         []string
+	MinConnections int
+	MaxConnections int
+	Timeout        time.Time
+}
+
+func WorkWithOptions(options WorkerOptions) error {
+	err := initEnvWithQueues(options.Queues)
 	if err != nil {
 		return err
 	}
-	p := newRedisPool(uri, connections, connections, time.Minute)
+	p := newRedisPool(uri, options.MinConnections, options.MaxConnections, options.Timeout)
 	defer p.Close()
 	return startWithPool(p)
 }
