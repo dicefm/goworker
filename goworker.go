@@ -41,7 +41,7 @@ type WorkerOptions struct {
 	Queues         []string
 	MinConnections int
 	MaxConnections int
-	Timeout        time.Time
+	Timeout        time.Duration
 }
 
 func WorkWithOptions(options WorkerOptions) error {
