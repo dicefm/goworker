@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/cihub/seelog"
-	"github.com/youtube/vitess/go/pools"
+	"github.com/dicefm/goworker/pools"
 )
 
 var logger seelog.LoggerInterface

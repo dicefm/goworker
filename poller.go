@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/youtube/vitess/go/pools"
+	"github.com/dicefm/goworker/pools"
 	"golang.org/x/net/context"
 )
 

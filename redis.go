@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/dicefm/goworker/pools"
 	"github.com/garyburd/redigo/redis"
-	"github.com/youtube/vitess/go/pools"
 )
 
 var (

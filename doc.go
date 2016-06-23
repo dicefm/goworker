@@ -23,7 +23,7 @@
 //
 //	import (
 //		"fmt"
-//		"github.com/benmanns/goworker"
+//		"github.com/dicefm/goworker"
 //	)
 //
 //	func myFunc(queue string, args ...interface{}) error {
@@ -47,7 +47,7 @@
 //	package main
 //
 //	import (
-//		"github.com/benmanns/goworker"
+//		"github.com/dicefm/goworker"
 //	)
 //
 //	func newMyFunc(uri string) {
